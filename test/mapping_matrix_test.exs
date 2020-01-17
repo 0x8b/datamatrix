@@ -60,7 +60,8 @@ defmodule DataMatrix.MappingMatrixTest do
       end)
       |> Enum.join("\n")
 
-    assert result == File.read!("./test/assets/mapping_matrices.data") |> String.replace("\r\n", "\n")
+    assert result ==
+             File.read!("./test/assets/mapping_matrices.data") |> String.replace("\r\n", "\n")
   end
 
   defp get_size(size) when is_integer(size) do
