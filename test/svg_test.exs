@@ -23,6 +23,9 @@ defmodule DataMatrix.SVGTest do
 
     svg = DataMatrix.SVG.format(data, color: "crimson", background: "pink")
 
-    File.write("./test/output/output.svg", svg)
+    directory = Path.expand("./test/output")
+
+    File.mkdir!(directory)
+    File.write!(Path.join(directory, "output.svg"), svg)
   end
 end
