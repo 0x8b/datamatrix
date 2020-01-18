@@ -1,46 +1,13 @@
 defmodule DataMatrix.MappingMatrixTest do
   use ExUnit.Case
-  alias DataMatrix.MappingMatrix
+  alias DataMatrix.{MappingMatrix, Matrix}
 
   doctest MappingMatrix
 
-  @size [
-    8,
-    10,
-    12,
-    14,
-    16,
-    18,
-    20,
-    22,
-    24,
-    28,
-    32,
-    36,
-    40,
-    44,
-    48,
-    56,
-    64,
-    72,
-    80,
-    88,
-    96,
-    108,
-    120,
-    132,
-    {6, 16},
-    {6, 28},
-    {10, 24},
-    {10, 32},
-    {14, 32},
-    {14, 44}
-  ]
-
   test "test mapping for all sizes" do
     result =
-      @size
-      |> Stream.map(&get_size/1)
+      0..29
+      |> Stream.map(&Matrix.mapping_matrix_size/1)
       |> Stream.map(fn {nrow, ncol} ->
         map =
           MappingMatrix.new(nrow, ncol)
@@ -62,14 +29,6 @@ defmodule DataMatrix.MappingMatrixTest do
 
     assert result ==
              File.read!("./test/assets/mapping_matrices.data") |> String.replace("\r\n", "\n")
-  end
-
-  defp get_size(size) when is_integer(size) do
-    {size, size}
-  end
-
-  defp get_size(size) when is_tuple(size) do
-    size
   end
 
   defp generate_labels(nrow, ncol) do

@@ -100,7 +100,7 @@ defmodule DataMatrix.Matrix do
     [0 | positions]
   end
 
-  defp mapping_matrix_size(version) do
+  def mapping_matrix_size(version) do
     {nrow, ncol} = size(version)
     {nr, nc} = no_of_data_regions(version)
 
