@@ -1,4 +1,4 @@
-defmodule Datamatrix.MixProject do
+defmodule DataMatrix.MixProject do
   use Mix.Project
 
   def project do

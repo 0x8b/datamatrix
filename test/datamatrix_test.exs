@@ -1,8 +1,4 @@
-defmodule DatamatrixTest do
+defmodule DataMatrixTest do
   use ExUnit.Case
-  doctest Datamatrix
-
-  test "greets the world" do
-    assert Datamatrix.hello() == :world
-  end
+  doctest DataMatrix
 end

@@ -1,18 +1,5 @@
-defmodule Datamatrix do
+defmodule DataMatrix do
   @moduledoc """
-  Documentation for Datamatrix.
+  Documentation for DataMatrix.
   """
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Datamatrix.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
 end
