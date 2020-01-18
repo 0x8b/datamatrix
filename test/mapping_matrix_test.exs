@@ -10,8 +10,8 @@ defmodule DataMatrix.MappingMatrixTest do
       |> Stream.map(&Matrix.mapping_matrix_size/1)
       |> Stream.map(fn {nrow, ncol} ->
         map =
-          MappingMatrix.new(nrow, ncol)
-          |> MappingMatrix.get_mapping()
+          MappingMatrix.get_mapping_matrix(nrow, ncol)
+          |> elem(0)
           |> Stream.zip(generate_labels(nrow, ncol))
           |> Map.new()
 

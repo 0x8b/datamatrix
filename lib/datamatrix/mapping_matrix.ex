@@ -1,18 +1,10 @@
 defmodule DataMatrix.MappingMatrix do
   @moduledoc false
 
-  defstruct [:nrow, :ncol]
-
-  def new(nrow, ncol) do
-    %__MODULE__{
-      nrow: nrow,
-      ncol: ncol
-    }
-  end
-
-  def get_mapping(%__MODULE__{nrow: nrow, ncol: ncol} = m) do
+  def get_mapping_matrix(nrow, ncol) do
     {mapping, _} =
-      Enum.flat_map_reduce(generate_placement_path(m), MapSet.new(), fn module, occupied ->
+      generate_placement_path(nrow, ncol)
+      |> Enum.flat_map_reduce(MapSet.new(), fn module, occupied ->
         if available?(module, occupied) do
           modules =
             Enum.map(shape(module, {nrow, ncol}), fn {row, col} ->
@@ -27,10 +19,21 @@ defmodule DataMatrix.MappingMatrix do
         end
       end)
 
-    mapping
+    empty = for row <- 0..(nrow - 1), col <- 0..(ncol - 1), into: %{}, do: {{row, col}, 0}
+
+    remaining_area =
+      if {nrow, ncol} in [{10, 10}, {14, 14}, {18, 18}, {22, 22}] do
+        %{{nrow - 1, ncol - 1} => 1, {nrow - 2, ncol - 2} => 1}
+      else
+        %{}
+      end
+
+    mapping_matrix = Map.merge(empty, remaining_area)
+
+    {mapping, mapping_matrix}
   end
 
-  defp generate_placement_path(%__MODULE__{nrow: nrow, ncol: ncol}) do
+  defp generate_placement_path(nrow, ncol) do
     Stream.iterate({4, 0, :upper_right}, fn {row, col, direction} ->
       if direction == :upper_right do
         if row - 2 >= 0 && col + 2 < ncol do

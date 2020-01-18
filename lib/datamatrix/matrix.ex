@@ -126,16 +126,20 @@ defmodule DataMatrix.Matrix do
 
   def draw_data(%__MODULE__{matrix: matrix, version: version} = m, bits) do
     {nrow, ncol} = mapping_matrix_size(version)
-    mapping = MappingMatrix.new(nrow, ncol) |> MappingMatrix.get_mapping()
+    {mapping, mapping_matrix} = MappingMatrix.get_mapping_matrix(nrow, ncol)
 
-    data_modules =
+    data_matrix =
       mapping
       |> subdivide_into_data_regions(data_region_size(version))
       |> Stream.zip(bits)
       |> Map.new()
+
+    data_matrix =
+      mapping_matrix
+      |> Map.merge(data_matrix)
       |> translate(1, 1)
 
-    %{m | matrix: Map.merge(matrix, data_modules)}
+    %{m | matrix: Map.merge(matrix, data_matrix)}
   end
 
   defp subdivide_into_data_regions(points, {nrow, ncol}) do
@@ -145,17 +149,6 @@ defmodule DataMatrix.Matrix do
         div(col, ncol) * (ncol + 2) + rem(col, ncol)
       }
     end)
-  end
-
-  def fill_remaining_area(%__MODULE__{matrix: matrix, nrow: nrow, ncol: ncol} = m) do
-    matrix =
-      if {nrow, ncol} in [{12, 12}, {16, 16}, {20, 20}, {24, 24}] do
-        %{matrix | {nrow - 2, ncol - 2} => 1, {nrow - 3, ncol - 3} => 1}
-      else
-        matrix
-      end
-
-    %{m | matrix: matrix}
   end
 
   defp translate(matrix, drow, dcol) do

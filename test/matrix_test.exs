@@ -33,7 +33,6 @@ defmodule DataMatrix.MatrixTest do
       Matrix.new(version)
       |> Matrix.draw_patterns()
       |> Matrix.draw_data(Bits.extract(<<0x8E, 0xA4, 0xBA, 0x72, 0x19, 0x05, 0x58, 0x66>>))
-      |> Matrix.fill_remaining_area()
       |> Matrix.draw_quiet_zone(2)
       |> Matrix.export()
 
