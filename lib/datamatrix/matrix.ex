@@ -1,48 +1,12 @@
 defmodule DataMatrix.Matrix do
   @moduledoc false
 
-  alias DataMatrix.MappingMatrix
-
-  @symbol_size {
-    10,
-    12,
-    14,
-    16,
-    18,
-    20,
-    22,
-    24,
-    26,
-    32,
-    36,
-    40,
-    44,
-    48,
-    52,
-    64,
-    72,
-    80,
-    88,
-    96,
-    104,
-    120,
-    132,
-    144,
-    {8, 18},
-    {8, 32},
-    {12, 26},
-    {12, 36},
-    {16, 36},
-    {16, 48}
-  }
-
-  @data_region {1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 4, 16, 16, 16, 16, 16, 16, 36, 36, 36,
-                1, 2, 1, 2, 2, 2}
+  alias DataMatrix.{MappingMatrix, SymbolAttribute}
 
   defstruct [:matrix, :version, :nrow, :ncol]
 
   def new(version) when version in 0..29 do
-    {nrow, ncol} = size(version)
+    {nrow, ncol} = SymbolAttribute.size(version)
 
     %__MODULE__{
       matrix: empty_matrix(nrow, ncol),
@@ -52,17 +16,8 @@ defmodule DataMatrix.Matrix do
     }
   end
 
-  defp size(version) do
-    size = elem(@symbol_size, version)
-
-    cond do
-      is_integer(size) -> {size, size}
-      true -> size
-    end
-  end
-
   def draw_patterns(%__MODULE__{matrix: matrix, nrow: nrow, ncol: ncol, version: version} = m) do
-    {region_nrow, region_ncol} = data_region_size(version)
+    {region_nrow, region_ncol} = SymbolAttribute.data_region_size(version)
 
     horizontal_patterns =
       get_positions(region_nrow, nrow)
@@ -100,37 +55,13 @@ defmodule DataMatrix.Matrix do
     [0 | positions]
   end
 
-  def mapping_matrix_size(version) do
-    {nrow, ncol} = size(version)
-    {nr, nc} = no_of_data_regions(version)
-
-    {nrow - 2 * nr, ncol - 2 * nc}
-  end
-
-  defp data_region_size(version) do
-    {nrow, ncol} = size(version)
-    {nr, nc} = no_of_data_regions(version)
-
-    {div(nrow, nr) - 2, div(ncol, nc) - 2}
-  end
-
-  defp no_of_data_regions(version) do
-    case elem(@data_region, version) do
-      1 -> {1, 1}
-      2 -> {1, 2}
-      4 -> {2, 2}
-      16 -> {4, 4}
-      36 -> {6, 6}
-    end
-  end
-
   def draw_data(%__MODULE__{matrix: matrix, version: version} = m, bits) do
-    {nrow, ncol} = mapping_matrix_size(version)
+    {nrow, ncol} = SymbolAttribute.mapping_matrix_size(version)
     {mapping, mapping_matrix} = MappingMatrix.get_mapping_matrix(nrow, ncol)
 
     data_matrix =
       mapping
-      |> subdivide_into_data_regions(data_region_size(version))
+      |> subdivide_into_data_regions(SymbolAttribute.data_region_size(version))
       |> Stream.zip(bits)
       |> Map.new()
 

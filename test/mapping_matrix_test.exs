@@ -1,13 +1,13 @@
 defmodule DataMatrix.MappingMatrixTest do
   use ExUnit.Case
-  alias DataMatrix.{MappingMatrix, Matrix}
+  alias DataMatrix.{MappingMatrix, SymbolAttribute}
 
   doctest MappingMatrix
 
   test "test mapping for all sizes" do
     result =
       0..29
-      |> Stream.map(&Matrix.mapping_matrix_size/1)
+      |> Stream.map(&SymbolAttribute.mapping_matrix_size/1)
       |> Stream.map(fn {nrow, ncol} ->
         map =
           MappingMatrix.get_mapping_matrix(nrow, ncol)
