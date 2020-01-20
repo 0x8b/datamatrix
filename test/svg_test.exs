@@ -25,7 +25,7 @@ defmodule DataMatrix.SVGTest do
 
     directory = Path.expand("./test/output")
 
-    File.mkdir!(directory)
+    File.mkdir(directory)
     File.write!(Path.join(directory, "output.svg"), svg)
   end
 end
