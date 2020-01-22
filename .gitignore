@@ -24,3 +24,4 @@ datamatrix-*.tar
 
 # Custom
 /test/output/
+*.todo
