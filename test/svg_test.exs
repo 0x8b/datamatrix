@@ -26,6 +26,32 @@ defmodule DataMatrix.SVGTest do
     directory = Path.expand("./test/output")
 
     File.mkdir(directory)
-    File.write!(Path.join(directory, "output.svg"), svg)
+    File.write!(Path.join(directory, "output_1.svg"), svg)
+  end
+
+  test "write SVG to file (matrix without quiet zone)" do
+    data = %{
+      nrow: 10,
+      ncol: 10,
+      matrix: [
+        [1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+        [1, 1, 0, 0, 1, 0, 1, 1, 0, 1],
+        [1, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+        [1, 1, 0, 0, 0, 1, 1, 1, 0, 1],
+        [1, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+        [1, 1, 1, 0, 1, 1, 0, 0, 0, 0],
+        [1, 1, 1, 1, 0, 1, 1, 0, 0, 1],
+        [1, 0, 0, 1, 1, 1, 0, 1, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+      ]
+    }
+
+    svg = DataMatrix.SVG.format(data, color: "green", background: "lightgreen")
+
+    directory = Path.expand("./test/output")
+
+    File.mkdir(directory)
+    File.write!(Path.join(directory, "output_2.svg"), svg)
   end
 end
