@@ -4,14 +4,14 @@ defmodule DataMatrix.SVG do
     color: "black"
   }
 
-  def format(%{nrow: nrow, ncol: ncol, matrix: matrix}, options \\ []) do
+  def format(%{nrow: nrow, ncol: ncol, matrix: rows}, options \\ []) do
     options = Map.merge(@default_options, Map.new(options))
 
     points =
-      matrix
-      |> Stream.with_index(1)
-      |> Stream.flat_map(fn {modules, row} ->
-        modules
+      rows
+      |> Stream.with_index(0)
+      |> Stream.flat_map(fn {row, index} ->
+        row
         |> Stream.chunk_by(& &1)
         |> Enum.map(&Enum.count/1)
         |> prepend(0)
@@ -20,11 +20,11 @@ defmodule DataMatrix.SVG do
         |> Stream.drop(1)
         |> Stream.drop(-1)
         |> Stream.chunk_every(2)
-        |> Stream.zip(Stream.dedup(modules))
+        |> Stream.zip(Stream.dedup(row))
         |> Stream.map(fn {[start, stop], module} ->
-          "#{start},#{row - module} #{stop},#{row - module}"
+          "#{start},#{index + 1 - module} #{stop},#{index + 1 - module}"
         end)
-        |> Stream.concat(["0,#{row}"])
+        |> Stream.concat(["#{ncol},#{index + 1} 0,#{index + 1}"])
       end)
       |> Enum.join(" ")
 
