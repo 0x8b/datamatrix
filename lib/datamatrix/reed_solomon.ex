@@ -18,7 +18,7 @@ defmodule DataMatrix.ReedSolomon do
 
         acc =
           for j <- 0..(length - 1),
-              do: Enum.at(acc, j + 1) ^^^ prod(k, Map.get(coefficients, length - j - 1))
+              do: Enum.at(acc, j + 1) ^^^ prod(k, elem(coefficients, length - j - 1))
 
         Enum.concat(acc, [0])
       end
@@ -28,21 +28,24 @@ defmodule DataMatrix.ReedSolomon do
   end
 
   def gen_poly(nc) do
-    coefficients = for a <- 0..nc, into: %{}, do: {a, 0}
+    # coefficients
+    c = Tuple.duplicate(0, nc + 1)
 
-    Enum.reduce(1..nc, %{coefficients | 0 => 1}, fn i, c ->
-      c = Map.put(c, i, Map.get(c, i - 1))
+    Enum.reduce(1..nc, put_elem(c, 0, 1), fn i, c ->
+      c = put_elem(c, i, elem(c, i - 1))
 
       c =
         if i - 1 >= 1 do
-          Enum.reduce((i - 1)..1, c, fn j, acc ->
-            Map.put(acc, j, Map.get(acc, j - 1) ^^^ prod(Map.get(acc, j), GaloisField.antilog(i)))
+          Enum.reduce((i - 1)..1, c, fn j, c ->
+            value = elem(c, j - 1) ^^^ prod(elem(c, j), GaloisField.antilog(i))
+
+            put_elem(c, j, value)
           end)
         else
           c
         end
 
-      %{c | 0 => prod(Map.get(c, 0), GaloisField.antilog(i))}
+      put_elem(c, 0, prod(elem(c, 0), GaloisField.antilog(i)))
     end)
   end
 
