@@ -19,16 +19,12 @@ defmodule DataMatrix.MappingMatrix do
         end
       end)
 
-    empty = for row <- 0..(nrow - 1), col <- 0..(ncol - 1), into: %{}, do: {{row, col}, 0}
-
-    remaining_area =
+    mapping_matrix =
       if {nrow, ncol} in [{10, 10}, {14, 14}, {18, 18}, {22, 22}] do
         %{{nrow - 1, ncol - 1} => 1, {nrow - 2, ncol - 2} => 1}
       else
         %{}
       end
-
-    mapping_matrix = Map.merge(empty, remaining_area)
 
     {mapping, mapping_matrix}
   end
