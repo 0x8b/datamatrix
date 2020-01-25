@@ -1,11 +1,22 @@
 defmodule DataMatrix.SVG do
   @default_options %{
     background: "white",
-    color: "black"
+    color: "black",
+    module_size: 5
   }
 
   def format(%{nrow: nrow, ncol: ncol, matrix: rows}, options \\ []) do
     options = Map.merge(@default_options, Map.new(options))
+
+    {height, width} =
+      get_size(options[:height], options[:width], options[:module_size], nrow, ncol)
+
+    dimensions =
+      if options[:viewport] do
+        ~s()
+      else
+        ~s(width="#{width}" height="#{height}" preserveAspectRatio="none")
+      end
 
     points =
       rows
@@ -30,7 +41,7 @@ defmodule DataMatrix.SVG do
 
     ~s"""
     <?xml version="1.0" standalone="yes"?>
-    <svg viewBox="0 0 #{ncol} #{nrow}" xmlns="http://www.w3.org/2000/svg">
+    <svg #{dimensions} viewBox="0 0 #{ncol} #{nrow}" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="#{options[:background]}"/>
       <polyline fill="#{options[:color]}" points="#{points}"/>
     </svg>
@@ -39,5 +50,21 @@ defmodule DataMatrix.SVG do
 
   defp prepend(list, element) do
     [element | list]
+  end
+
+  defp get_size(nil, nil, module_size, nrow, ncol) do
+    {nrow * module_size, ncol * module_size}
+  end
+
+  defp get_size(height, nil, _module_size, nrow, ncol) when is_number(height) do
+    {height, height * (ncol / nrow)}
+  end
+
+  defp get_size(nil, width, _module_size, nrow, ncol) when is_number(width) do
+    {width * (nrow / ncol), width}
+  end
+
+  defp get_size(height, width, _module_size, _nrow, _ncol) do
+    {height, width}
   end
 end

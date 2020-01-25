@@ -29,7 +29,9 @@ defmodule DataMatrixTest do
       matrix: to_matrix(data_matrix, 16)
     }
 
-    assert DataMatrix.encode("30Q324343430794<OQQ", 0) == expected
+    result = DataMatrix.encode("30Q324343430794<OQQ", 0)
+
+    assert result == expected
   end
 
   test "123456" do
@@ -57,7 +59,9 @@ defmodule DataMatrixTest do
       matrix: to_matrix(data_matrix, 14)
     }
 
-    assert DataMatrix.encode("123456", 2) == expected
+    result = DataMatrix.encode("123456", 2)
+
+    assert result == expected
   end
 
   @tag :skip
@@ -90,7 +94,9 @@ defmodule DataMatrixTest do
       matrix: to_matrix(data_matrix, 18)
     }
 
-    assert DataMatrix.encode("A1B2C3D4E5F6G7H8I9J0K1L2", 0) == expected
+    result = DataMatrix.encode("A1B2C3D4E5F6G7H8I9J0K1L2", 0)
+
+    assert result == expected
   end
 
   defp to_matrix(datamatrix, ncol) do
