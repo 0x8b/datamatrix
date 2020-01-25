@@ -2,6 +2,16 @@
 
 This is a software library that enables programs to write Data Matrix barcodes of the modern ECC200 variety.
 
+## Installation
+
+```exs
+def deps do
+  [
+    {:data_matrix, "~> 0.1.0"}
+  ]
+end
+```
+
 ## Example
 
 ```ex
