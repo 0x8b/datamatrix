@@ -15,11 +15,11 @@ defmodule DataMatrix.Encode do
     iex> DataMatrix.Encode.encode("AAAAAAAAA")
     {3, <<66, 66, 66, 66, 66, 66, 66, 66, 66, 129, 101, 251>>}
   """
-  def encode(input) when is_binary(input) do
+  def encode(input, type \\ :square) when is_binary(input) do
     encoded = do_encode(input)
     length = byte_size(encoded)
 
-    version = find_symbol_version(length)
+    version = find_symbol_version(length, type)
     capacity = SymbolAttribute.data_capacity(version)
 
     {version, encoded <> randomize_253_state(length, capacity - length)}
@@ -46,10 +46,27 @@ defmodule DataMatrix.Encode do
     <<>>
   end
 
-  defp find_symbol_version(data_length) do
-    Enum.find_index(SymbolAttribute.total_data_codewords(), fn capacity ->
-      capacity >= data_length
-    end)
+  defp find_symbol_version(data_length, :rectangle) do
+    do_find_symbol_version(data_length, 24)
+  end
+
+  defp find_symbol_version(data_length, _) do
+    do_find_symbol_version(data_length, 0)
+  end
+
+  defp do_find_symbol_version(data_length, offset) do
+    version =
+      SymbolAttribute.total_data_codewords()
+      |> Stream.drop(offset)
+      |> Enum.find_index(fn capacity ->
+        capacity >= data_length
+      end)
+
+    unless version do
+      raise ArgumentError, message: "Message too large"
+    end
+
+    version + offset
   end
 
   defp randomize_253_state(_, 0) do

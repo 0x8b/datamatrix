@@ -5,8 +5,8 @@ defmodule DataMatrix do
 
   alias DataMatrix.{Bits, Encode, Matrix, ReedSolomon, SymbolAttribute, SVG}
 
-  def encode(data, quiet_zone \\ 1) when is_binary(data) do
-    {version, encoded} = Encode.encode(data)
+  def encode(data, options \\ [quiet_zone: 1, type: :square]) when is_binary(data) do
+    {version, encoded} = Encode.encode(data, options[:type])
 
     blocks = SymbolAttribute.interleaved_blocks(version)
     errors = SymbolAttribute.total_error_codewords(version)
@@ -31,7 +31,7 @@ defmodule DataMatrix do
     Matrix.new(version)
     |> Matrix.draw_patterns()
     |> Matrix.draw_data(bits)
-    |> Matrix.draw_quiet_zone(quiet_zone)
+    |> Matrix.draw_quiet_zone(options[:quiet_zone])
     |> Matrix.export()
   end
 
