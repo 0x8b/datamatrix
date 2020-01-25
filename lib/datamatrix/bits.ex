@@ -3,13 +3,13 @@ defmodule DataMatrix.Bits do
     iex> DataMatrix.Bits.extract(<<99>>)
     [0, 1, 1, 0, 0, 0, 1, 1]
   """
-  def extract(str) when is_binary(str) do
-    extract(str, [])
+  def extract(bits) when is_bitstring(bits) do
+    do_extract(bits, [])
   end
 
-  defp extract(<<b::size(1), bits::bitstring>>, acc) when is_bitstring(bits) do
-    extract(bits, [b | acc])
+  defp do_extract(<<bit::size(1), rest::bitstring>>, bits) when is_bitstring(rest) do
+    do_extract(rest, [bit | bits])
   end
 
-  defp extract(<<>>, acc), do: acc |> Enum.reverse()
+  defp do_extract(<<>>, bits), do: bits |> Enum.reverse()
 end
