@@ -18,38 +18,36 @@ defmodule DataMatrix.SVG do
         ~s(width="#{width}" height="#{height}" preserveAspectRatio="none")
       end
 
-    points =
+    lines =
       rows
       |> Stream.with_index(0)
-      |> Stream.flat_map(fn {row, index} ->
-        row
-        |> Stream.chunk_by(& &1)
-        |> Enum.map(&Enum.count/1)
-        |> prepend(0)
-        |> Stream.scan(&(&1 + &2))
-        |> Stream.flat_map(fn x -> [x, x] end)
-        |> Stream.drop(1)
-        |> Stream.drop(-1)
-        |> Stream.chunk_every(2)
-        |> Stream.zip(Stream.dedup(row))
-        |> Stream.map(fn {[start, stop], module} ->
-          "#{start},#{index + 1 - module} #{stop},#{index + 1 - module}"
-        end)
-        |> Stream.concat(["#{ncol},#{index + 1} 0,#{index + 1}"])
+      |> Stream.map(fn {row, index} ->
+        dasharray =
+          row
+          |> Stream.chunk_by(& &1)
+          |> Stream.map(&Enum.count/1)
+          |> Enum.join(" ")
+
+        dasharray =
+          if hd(row) == 0 do
+            "0 " <> dasharray
+          else
+            dasharray
+          end
+
+        ~s(<line x1="0" y1="#{index}" x2="#{ncol}" y2="#{index}" stroke-dasharray="#{dasharray}"/>)
       end)
-      |> Enum.join(" ")
+      |> Enum.join("\n")
 
     ~s"""
     <?xml version="1.0" standalone="yes"?>
     <svg #{dimensions} viewBox="0 0 #{ncol} #{nrow}" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="#{options[:background]}"/>
-      <polyline fill="#{options[:color]}" points="#{points}"/>
+      <g transform="translate(0 0.5)" stroke="#{options[:color]}" stroke-width="1">
+        #{lines}
+      </g>
     </svg>
     """
-  end
-
-  defp prepend(list, element) do
-    [element | list]
   end
 
   defp get_size(nil, nil, module_size, nrow, ncol) do

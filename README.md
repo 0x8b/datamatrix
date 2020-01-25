@@ -25,7 +25,7 @@ svg =
 File.write!("square.svg", svg)
 ```
 
-<img src="./docs/figures/example_square_123456.svg" width="200" alt="Example Data Matrix">
+<img src="./docs/figures/example_square.svg" alt="Example square Data Matrix">
 
 ```ex
 matrix = DataMatrix.encode("A1B2C3D4E5F6G7H8I9J0K1L2", quiet_zone: 2, type: :rectangle)
