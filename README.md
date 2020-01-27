@@ -12,6 +12,30 @@ def deps do
 end
 ```
 
+## Rendering options
+
+There are currently two formats available: `:svg` and `:text`.
+
+### SVG options
+
+| Option name | Default value |
+| --- | --- |
+| `width` | auto |
+| `height` | auto |
+| `viewbox` | `false` |
+| `module_size` | `5` |
+| `color` | `"black"` |
+| `background` | `"white"` |
+
+### Text options
+
+| Option name | Default value |
+| --- | --- |
+| `zero` | `"0"` |
+| `one` | `"1"` |
+| `newline` | `"\n"` |
+| `separator` | `""` |
+
 ## Example
 
 ```ex
