@@ -20,7 +20,7 @@ data = "123456"
 svg =
   data
   |> DataMatrix.encode()
-  |> DataMatrix.format(:svg, color: "purple", background: "bisque", width: 200)
+  |> DataMatrix.format(:svg, color: "#6e4a7e", background: "aliceblue", width: 200)
 
 File.write!("square.svg", svg)
 ```
@@ -30,8 +30,7 @@ File.write!("square.svg", svg)
 ```ex
 matrix = DataMatrix.encode("A1B2C3D4E5F6G7H8I9J0K1L2", quiet_zone: 2, type: :rectangle)
 
-File.write("rectangular.svg", DataMatrix.format(matrix, :svg))
+File.write("rectangular.svg", DataMatrix.format(matrix, :svg, module_size: 8))
 ```
 
 <img src="./docs/figures/example_rectangular.svg" alt="Example rectangular Data Matrix">
-
