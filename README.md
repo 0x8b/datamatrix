@@ -7,7 +7,7 @@ This is a software library that enables programs to write Data Matrix barcodes o
 ```exs
 def deps do
   [
-    {:data_matrix, "~> 0.1.0"}
+    {:data_matrix, "~> 0.1.1"}
   ]
 end
 ```
