@@ -1,4 +1,4 @@
-defmodule DataMatrix.SVGTest do
+defmodule DataMatrix.Render.SVGTest do
   use ExUnit.Case
 
   test "write SVG to file" do
@@ -21,7 +21,7 @@ defmodule DataMatrix.SVGTest do
       ]
     }
 
-    svg = DataMatrix.SVG.format(data, color: "crimson", background: "pink")
+    svg = DataMatrix.Render.SVG.format(data, color: "crimson", background: "pink")
 
     directory = Path.expand("./test/output")
 
@@ -47,7 +47,7 @@ defmodule DataMatrix.SVGTest do
       ]
     }
 
-    svg = DataMatrix.SVG.format(data, color: "green", background: "lightgreen")
+    svg = DataMatrix.Render.SVG.format(data, color: "green", background: "lightgreen")
 
     directory = Path.expand("./test/output")
 

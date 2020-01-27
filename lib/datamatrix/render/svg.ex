@@ -1,4 +1,4 @@
-defmodule DataMatrix.SVG do
+defmodule DataMatrix.Render.SVG do
   @default_options %{
     background: "white",
     color: "black",

@@ -3,7 +3,7 @@ defmodule DataMatrix do
   Documentation for DataMatrix.
   """
 
-  alias DataMatrix.{Bits, Encode, Matrix, ReedSolomon, SymbolAttribute, SVG}
+  alias DataMatrix.{Bits, Encode, Matrix, ReedSolomon, SymbolAttribute}
 
   def encode(data, options \\ [quiet_zone: 1, type: :square]) when is_binary(data) do
     {version, encoded} = Encode.encode(data, options[:type])
@@ -35,7 +35,13 @@ defmodule DataMatrix do
     |> Matrix.export()
   end
 
-  def format(matrix, :svg, options \\ []) do
-    SVG.format(matrix, options)
+  def format(matrix, _, options \\ [])
+
+  def format(matrix, :svg, options) do
+    DataMatrix.Render.SVG.format(matrix, options)
+  end
+
+  def format(matrix, :text, options) do
+    DataMatrix.Render.Text.format(matrix, options)
   end
 end
