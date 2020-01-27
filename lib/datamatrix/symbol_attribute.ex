@@ -1,7 +1,4 @@
 defmodule DataMatrix.SymbolAttribute do
-  @data_region {1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 4, 16, 16, 16, 16, 16, 16, 36, 36, 36,
-                1, 2, 1, 2, 2, 2}
-
   symbol_size =
     [
       10,
@@ -41,8 +38,52 @@ defmodule DataMatrix.SymbolAttribute do
         true -> size
       end
     end)
+    |> List.to_tuple()
 
-  Module.put_attribute(__MODULE__, :symbol_size, List.to_tuple(symbol_size))
+  Module.put_attribute(__MODULE__, :symbol_size, symbol_size)
+
+  data_region =
+    [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      6,
+      6,
+      6,
+      1,
+      {1, 2},
+      1,
+      {1, 2},
+      {1, 2},
+      {1, 2}
+    ]
+    |> Enum.map(fn size ->
+      cond do
+        is_integer(size) -> {size, size}
+        true -> size
+      end
+    end)
+    |> List.to_tuple()
+
+  Module.put_attribute(__MODULE__, :data_region, data_region)
 
   @total_data_codewords {
     3,
@@ -147,44 +188,30 @@ defmodule DataMatrix.SymbolAttribute do
     elem(@symbol_size, version)
   end
 
-  defp data_region(version) do
-    elem(@data_region, version)
-  end
-
   def mapping_matrix_size(version) do
     {nrow, ncol} = size(version)
-    {nr, nc} = no_of_data_regions(version)
+    {nr, nc} = elem(@data_region, version)
 
     {nrow - 2 * nr, ncol - 2 * nc}
   end
 
   def data_region_size(version) do
     {nrow, ncol} = size(version)
-    {nr, nc} = no_of_data_regions(version)
+    {nr, nc} = elem(@data_region, version)
 
     {div(nrow, nr) - 2, div(ncol, nc) - 2}
-  end
-
-  defp no_of_data_regions(version) do
-    case data_region(version) do
-      1 -> {1, 1}
-      2 -> {1, 2}
-      4 -> {2, 2}
-      16 -> {4, 4}
-      36 -> {6, 6}
-    end
   end
 
   def total_data_codewords do
     Tuple.to_list(@total_data_codewords)
   end
 
-  def data_capacity(version) do
-    elem(@total_data_codewords, version)
-  end
-
   def total_error_codewords(version) do
     elem(@total_error_codewords, version)
+  end
+
+  def data_capacity(version) do
+    elem(@total_data_codewords, version)
   end
 
   def interleaved_blocks(version) do
