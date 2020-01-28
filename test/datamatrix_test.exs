@@ -29,7 +29,7 @@ defmodule DataMatrixTest do
       matrix: to_matrix(data_matrix, 16)
     }
 
-    result = DataMatrix.encode("30Q324343430794<OQQ", quiet_zone: 0)
+    result = DataMatrix.encode!("30Q324343430794<OQQ", quiet_zone: 0)
 
     assert result == expected
   end
@@ -59,7 +59,7 @@ defmodule DataMatrixTest do
       matrix: to_matrix(data_matrix, 14)
     }
 
-    result = DataMatrix.encode("123456", quiet_zone: 2)
+    result = DataMatrix.encode!("123456", quiet_zone: 2)
 
     assert result == expected
   end
@@ -94,7 +94,7 @@ defmodule DataMatrixTest do
       matrix: to_matrix(data_matrix, 18)
     }
 
-    result = DataMatrix.encode("A1B2C3D4E5F6G7H8I9J0K1L2", quiet_zone: 0)
+    result = DataMatrix.encode!("A1B2C3D4E5F6G7H8I9J0K1L2", quiet_zone: 0)
 
     assert result == expected
   end

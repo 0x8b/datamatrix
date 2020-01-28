@@ -1,47 +1,48 @@
 defmodule DataMatrix do
   @moduledoc """
-  Documentation for DataMatrix.
+  Library that enables programs to write Data Matrix barcodes of the modern ECC200 variety.
+  Docs: https://github.com/0x8b/datamatrix
   """
 
-  alias DataMatrix.{Bits, Encode, Matrix, ReedSolomon, SymbolAttribute}
+  alias DataMatrix.{Bits, Encode, Matrix, ReedSolomon}
 
-  def encode(data, options \\ [quiet_zone: 1, type: :square]) when is_binary(data) do
-    {version, encoded} = Encode.encode(data, options[:type])
+  @default_opts [
+    quiet_zone: 1,
+    shape: :square
+  ]
 
-    blocks = SymbolAttribute.interleaved_blocks(version)
-    errors = SymbolAttribute.total_error_codewords(version)
+  def encode!(data, opts \\ [])
 
-    ecc =
-      0..(blocks - 1)
-      |> Stream.map(fn offset ->
-        dropped =
-          Enum.drop(:binary.bin_to_list(encoded), offset)
-          |> Enum.take_every(blocks)
-          |> :binary.list_to_bin()
+  def encode!(data, opts) when is_binary(data) do
+    opts = Keyword.merge(@default_opts, opts)
 
-        ReedSolomon.encode(dropped, div(errors, blocks))
-      end)
-      |> Enum.map(&:binary.bin_to_list/1)
-      |> Enum.zip()
-      |> Enum.flat_map(&Tuple.to_list(&1))
-      |> :binary.list_to_bin()
+    case Encode.encode!(data, opts[:version] || opts[:shape]) do
+      {:ok, version, data_codewords} -> do_encode(version, data_codewords, opts)
+      {:error, error} -> raise ArgumentError, message: error
+    end
+  end
 
-    bits = (encoded <> ecc) |> Bits.extract()
+  def encode!(data, _opts) when is_nil(data) do
+    raise ArgumentError, message: "Missing `data` argument."
+  end
+
+  defp do_encode(version, data_codewords, opts) do
+    error_codewords = ReedSolomon.encode(version, data_codewords)
 
     Matrix.new(version)
     |> Matrix.draw_patterns()
-    |> Matrix.draw_data(bits)
-    |> Matrix.draw_quiet_zone(options[:quiet_zone])
+    |> Matrix.draw_data(Bits.extract(data_codewords <> error_codewords))
+    |> Matrix.draw_quiet_zone(opts[:quiet_zone])
     |> Matrix.export()
   end
 
-  def format(matrix, _, options \\ [])
+  def format(matrix, _, opts \\ [])
 
-  def format(matrix, :svg, options) do
-    DataMatrix.Render.SVG.format(matrix, options)
+  def format(matrix, :svg, opts) do
+    DataMatrix.Render.SVG.format(matrix, opts)
   end
 
-  def format(matrix, :text, options) do
-    DataMatrix.Render.Text.format(matrix, options)
+  def format(matrix, :text, opts) do
+    DataMatrix.Render.Text.format(matrix, opts)
   end
 end

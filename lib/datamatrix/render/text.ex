@@ -1,16 +1,11 @@
 defmodule DataMatrix.Render.Text do
-  @default_options %{
-    one: "1",
-    zero: "0",
-    newline: "\n",
-    separator: ""
-  }
+  @default_opts [one: "1", zero: "0", separator: "", newline: "\n"]
 
-  def format(%{nrow: nrow, ncol: ncol, matrix: rows}, options \\ []) do
-    options = Map.merge(@default_options, Map.new(options))
+  def format(%{matrix: rows}, opts \\ []) do
+    opts = Keyword.merge(@default_opts, opts)
 
-    symbol_for_one = to_string(options[:one])
-    symbol_for_zero = to_string(options[:zero])
+    symbol_for_one = to_string(opts[:one])
+    symbol_for_zero = to_string(opts[:zero])
 
     rows
     |> Stream.map(fn row ->
@@ -20,8 +15,8 @@ defmodule DataMatrix.Render.Text do
           1 -> symbol_for_one
         end
       end)
-      |> Enum.join(options[:separator])
+      |> Enum.join(opts[:separator])
     end)
-    |> Enum.join(options[:newline])
+    |> Enum.join(opts[:newline])
   end
 end
