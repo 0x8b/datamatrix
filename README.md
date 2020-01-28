@@ -10,7 +10,7 @@ References:
 
 - [Installation](#installation)
 - [Features](#features)
-- [Usage](#usage)
+- [Examples](#examples)
 - [Encode options](#encode-options)
 - [Rendering options](#rendering-options)
   - [SVG](#svg-options)
@@ -28,7 +28,7 @@ The package can be installed by adding `data_matrix` to your list of dependencie
 ```exs
 def deps do
   [
-    {:data_matrix, "~> 1.0.0"}
+    {:data_matrix, "~> 0.1.2"}
   ]
 end
 ```
@@ -40,7 +40,7 @@ Don't forget to run `mix deps.get`
 - rectangular symbols (this is optional according to ISO/IEC 16022:2006(E))
 - default encoding scheme
 
-## Usage
+## Examples
 
 ```ex
 data = "A1B2C3D4E5F6G7H8I9J0K1L2"
@@ -72,7 +72,7 @@ File.write!("square.svg", svg)
 `ArgumentError` is thrown when the number of data codewords exceeds the symbol capacity.
 
 | Option | Default value | Description |
-| --- | --: | --- |
+| :-- | :-- | :-- |
 | `quiet_zone` | `1` | All four sides of symbol are surrounded by quiet zone border. |
 | `version` | auto | See [Maximum data capacity](#maximum-data-capacity). Version is selected automatically if not specified. |
 | `shape` | `:square` | Shape of symbol. Available shapes are `:square` and `:rectangle`. |
@@ -85,7 +85,7 @@ There are currently two formats available: `:svg` and `:text`.
 ### SVG options
 
 | Option name | Default value | Description |
-| --- | --- | --- |
+| :-- | :-- | :-- |
 | `width` | auto | Width in pixels (quiet zone included). |
 | `height` | auto | Height in pixels (quiet zone included). |
 | `viewbox` | `false` | Width and height are not included in SVG if `viewbox` is set to `true`. |
@@ -96,11 +96,11 @@ There are currently two formats available: `:svg` and `:text`.
 ### Text options
 
 | Option name | Default value | Description |
-| --- | --- | --- |
+| :-- | :-- | :-- |
 | `zero` | `"0"` | Representation of light module. |
 | `one` | `"1"` | Representation of dark module. |
-| `newline` | `"\n"` | String that is used to join modules in a row. |
-| `separator` | `""` | String that is used to join rows. |
+| `separator` | `""` | String that is used to join modules in a row. |
+| `newline` | `"\n"` | String that is used to join rows. |
 
 
 ## Maximum data capacity
