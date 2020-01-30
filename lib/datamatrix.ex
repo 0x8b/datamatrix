@@ -4,13 +4,16 @@ defmodule DataMatrix do
   Docs: https://github.com/0x8b/datamatrix
   """
 
-  alias DataMatrix.{Bits, Encode, Matrix, ReedSolomon}
+  alias DataMatrix.{Bits, Encode, Matrix, ReedSolomon, Render}
 
   @default_opts [
     quiet_zone: 1,
     shape: :square
   ]
 
+  @doc """
+
+  """
   def encode!(data, opts \\ [])
 
   def encode!(data, opts) when is_binary(data) do
@@ -36,13 +39,16 @@ defmodule DataMatrix do
     |> Matrix.export()
   end
 
+  @doc """
+
+  """
   def format(matrix, _, opts \\ [])
 
   def format(matrix, :svg, opts) do
-    DataMatrix.Render.SVG.format(matrix, opts)
+    Render.SVG.format(matrix, opts)
   end
 
   def format(matrix, :text, opts) do
-    DataMatrix.Render.Text.format(matrix, opts)
+    Render.Text.format(matrix, opts)
   end
 end

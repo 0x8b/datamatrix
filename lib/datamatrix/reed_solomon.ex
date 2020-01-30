@@ -1,4 +1,6 @@
 defmodule DataMatrix.ReedSolomon do
+  @moduledoc false
+
   import Bitwise
 
   alias DataMatrix.{GaloisField, SymbolAttribute}
@@ -37,6 +39,9 @@ defmodule DataMatrix.ReedSolomon do
     |> :binary.list_to_bin()
   end
 
+  @doc """
+
+  """
   def gen_poly(nc) do
     # coefficients
     c = Tuple.duplicate(0, nc + 1)

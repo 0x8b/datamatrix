@@ -1,10 +1,15 @@
 defmodule DataMatrix.Render.SVG do
+  @moduledoc false
+
   @default_options %{
     background: "white",
     color: "black",
     module_size: 5
   }
 
+  @doc """
+
+  """
   def format(%{nrow: nrow, ncol: ncol, matrix: rows}, options \\ []) do
     options = Map.merge(@default_options, Map.new(options))
 

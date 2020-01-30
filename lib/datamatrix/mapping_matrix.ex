@@ -1,6 +1,9 @@
 defmodule DataMatrix.MappingMatrix do
   @moduledoc false
 
+  @doc """
+
+  """
   def get_mapping_matrix(nrow, ncol) do
     {mapping, _} =
       generate_placement_path(nrow, ncol)

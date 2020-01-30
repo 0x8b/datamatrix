@@ -3,7 +3,7 @@ defmodule DataMatrix.MixProject do
 
   def project do
     [
-      app: :data_matrix,
+      app: :datamatrix,
       version: "0.1.2",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
@@ -23,7 +23,10 @@ defmodule DataMatrix.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:git_hooks, "~> 0.4.0", only: [:test, :dev], runtime: false},
+      {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false},
+      {:doctor, "~> 0.11.0", only: [:dev, :test], runtime: false}
     ]
   end
 

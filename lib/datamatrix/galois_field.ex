@@ -1,4 +1,6 @@
 defmodule DataMatrix.GaloisField do
+  @moduledoc false
+
   import Bitwise
 
   @gf 256
@@ -18,10 +20,16 @@ defmodule DataMatrix.GaloisField do
     Module.put_attribute(__MODULE__, :antilog_301, Map.put(@antilog_301, index, value))
   end)
 
+  @doc """
+
+  """
   def log(i) do
     Map.get(@log_301, i)
   end
 
+  @doc """
+
+  """
   def antilog(i) do
     Map.get(@antilog_301, i)
   end

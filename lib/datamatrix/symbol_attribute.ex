@@ -1,4 +1,6 @@
 defmodule DataMatrix.SymbolAttribute do
+  @moduledoc false
+
   @symbol_size {
     {10, 10},
     {12, 12},
@@ -164,10 +166,16 @@ defmodule DataMatrix.SymbolAttribute do
     1
   }
 
+  @doc """
+
+  """
   def size(version) do
     elem(@symbol_size, version)
   end
 
+  @doc """
+
+  """
   def mapping_matrix_size(version) do
     {nrow, ncol} = size(version)
     {nr, nc} = elem(@data_region, version)
@@ -175,6 +183,9 @@ defmodule DataMatrix.SymbolAttribute do
     {nrow - 2 * nr, ncol - 2 * nc}
   end
 
+  @doc """
+
+  """
   def data_region_size(version) do
     {nrow, ncol} = size(version)
     {nr, nc} = elem(@data_region, version)
@@ -182,18 +193,30 @@ defmodule DataMatrix.SymbolAttribute do
     {div(nrow, nr) - 2, div(ncol, nc) - 2}
   end
 
+  @doc """
+
+  """
   def total_data_codewords do
     Tuple.to_list(@total_data_codewords)
   end
 
+  @doc """
+
+  """
   def total_error_codewords(version) do
     elem(@total_error_codewords, version)
   end
 
+  @doc """
+
+  """
   def data_capacity(version) do
     elem(@total_data_codewords, version)
   end
 
+  @doc """
+
+  """
   def interleaved_blocks(version) do
     elem(@interleaved_blocks, version)
   end

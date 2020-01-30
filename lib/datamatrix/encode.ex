@@ -1,4 +1,6 @@
 defmodule DataMatrix.Encode do
+  @moduledoc false
+
   alias DataMatrix.SymbolAttribute
 
   @ascii_digit 48..57
@@ -19,6 +21,9 @@ defmodule DataMatrix.Encode do
     encode!(binary, :square)
   end
 
+  @doc """
+
+  """
   def encode!(binary, version) do
     data_codewords = encode_ascii(binary)
     data_codewords_length = byte_size(data_codewords)

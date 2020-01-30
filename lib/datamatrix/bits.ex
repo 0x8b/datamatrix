@@ -1,4 +1,6 @@
 defmodule DataMatrix.Bits do
+  @moduledoc false
+
   @doc """
     iex> DataMatrix.Bits.extract(<<99>>)
     [0, 1, 1, 0, 0, 0, 1, 1]

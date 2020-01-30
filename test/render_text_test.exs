@@ -1,6 +1,8 @@
 defmodule DataMatrix.Render.TextTest do
   use ExUnit.Case
 
+  alias DataMatrix.Render.Text
+
   test "write text to file" do
     data = %{
       nrow: 12,
@@ -21,7 +23,7 @@ defmodule DataMatrix.Render.TextTest do
       ]
     }
 
-    text = DataMatrix.Render.Text.format(data)
+    text = Text.format(data)
 
     directory = Path.expand("./test/output")
 

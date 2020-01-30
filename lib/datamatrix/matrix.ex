@@ -5,6 +5,9 @@ defmodule DataMatrix.Matrix do
 
   defstruct [:matrix, :version, :nrow, :ncol]
 
+  @doc """
+
+  """
   def new(version) when version in 0..29 do
     {nrow, ncol} = SymbolAttribute.size(version)
 
@@ -16,6 +19,9 @@ defmodule DataMatrix.Matrix do
     }
   end
 
+  @doc """
+
+  """
   def draw_patterns(%__MODULE__{matrix: matrix, nrow: nrow, ncol: ncol, version: version} = m) do
     {region_nrow, region_ncol} = SymbolAttribute.data_region_size(version)
 
@@ -55,6 +61,9 @@ defmodule DataMatrix.Matrix do
     [0 | positions]
   end
 
+  @doc """
+
+  """
   def draw_data(%__MODULE__{matrix: matrix, version: version} = m, bits) do
     {nrow, ncol} = SymbolAttribute.mapping_matrix_size(version)
     {mapping, mapping_matrix} = MappingMatrix.get_mapping_matrix(nrow, ncol)
@@ -88,6 +97,9 @@ defmodule DataMatrix.Matrix do
         do: {{row + drow, col + dcol}, value}
   end
 
+  @doc """
+
+  """
   def draw_quiet_zone(%__MODULE__{matrix: matrix, nrow: nrow, ncol: ncol} = m, width \\ 1) do
     new_nrow = nrow + 2 * width
     new_ncol = ncol + 2 * width
@@ -99,6 +111,9 @@ defmodule DataMatrix.Matrix do
     %__MODULE__{m | matrix: Map.merge(empty, centered_matrix), nrow: new_nrow, ncol: new_ncol}
   end
 
+  @doc """
+
+  """
   def export(%__MODULE__{matrix: matrix, nrow: nrow, ncol: ncol, version: version}) do
     flatten =
       for row <- 0..(nrow - 1),
