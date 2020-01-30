@@ -6,8 +6,10 @@ defmodule DataMatrix.ReedSolomon do
   alias DataMatrix.{GaloisField, SymbolAttribute}
 
   @doc """
-    iex> DataMatrix.ReedSolomon.encode(0, <<142, 164, 186>>)
-    <<114, 25, 5, 88, 102>>
+  ## Examples
+
+      iex> DataMatrix.ReedSolomon.encode(0, <<142, 164, 186>>)
+      <<114, 25, 5, 88, 102>>
   """
   def encode(version, data) do
     blocks = SymbolAttribute.interleaved_blocks(version)

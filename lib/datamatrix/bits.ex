@@ -2,8 +2,10 @@ defmodule DataMatrix.Bits do
   @moduledoc false
 
   @doc """
-    iex> DataMatrix.Bits.extract(<<99>>)
-    [0, 1, 1, 0, 0, 0, 1, 1]
+    ## Examples
+
+        iex> DataMatrix.Bits.extract(<<99>>)
+        [0, 1, 1, 0, 0, 0, 1, 1]
   """
   def extract(bits) when is_bitstring(bits) do
     do_extract(bits, [])

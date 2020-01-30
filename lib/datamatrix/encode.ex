@@ -8,14 +8,15 @@ defmodule DataMatrix.Encode do
   @upper_shift 235
 
   @doc """
-    iex> DataMatrix.Encode.encode!("1234569")
-    {:ok, 1, <<142, 164, 186, 58, 129>>}
+  ## Examples
+      iex> DataMatrix.Encode.encode!("1234569")
+      {:ok, 1, <<142, 164, 186, 58, 129>>}
 
-    iex> DataMatrix.Encode.encode!("Aa999")
-    {:ok, 1, <<66, 98, 229, 58, 129>>}
+      iex> DataMatrix.Encode.encode!("Aa999")
+      {:ok, 1, <<66, 98, 229, 58, 129>>}
 
-    iex> DataMatrix.Encode.encode!("AAAAAAAAA")
-    {:ok, 3, <<66, 66, 66, 66, 66, 66, 66, 66, 66, 129, 101, 251>>}
+      iex> DataMatrix.Encode.encode!("AAAAAAAAA")
+      {:ok, 3, <<66, 66, 66, 66, 66, 66, 66, 66, 66, 129, 101, 251>>}
   """
   def encode!(binary) do
     encode!(binary, :square)
