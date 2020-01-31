@@ -53,18 +53,26 @@ mix escript.install github 0x8b/datamatrix
 2) Then you are ready to use it:
 
 ```console
+# Linux
+
 datamatrix -i "hello" -o "symbol.svg"
+
+# or
+
+echo -n 123456 | datamatrix
 ```
 
-or 
-
 ```console
-echo -n 123456 | datamatrix
+# Windows
+
+type content.txt | escript datamatrix
 ```
 
 For more details about using the command line tool, review the usage guide:
 
-`datamatrix --help`
+```console
+datamatrix --help
+```
 
 ## Features
 

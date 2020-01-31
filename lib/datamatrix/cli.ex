@@ -57,7 +57,7 @@ defmodule DataMatrix.CLI do
       |> DataMatrix.encode!(quiet_zone: opts[:quietzone], shape: shape)
 
     datamatrix
-    |> DataMatrix.format(:text, dark: "\e[40m  \e[0m", light: "\e[107m  \e[0m")
+    |> DataMatrix.format(:text, dark: "  ", light: "\u2588\u2588")
     |> IO.puts()
 
     if Keyword.has_key?(opts, :output) do
