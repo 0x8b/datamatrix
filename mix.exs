@@ -1,15 +1,18 @@
 defmodule DataMatrix.MixProject do
   use Mix.Project
 
+  @version "0.1.2"
+
   def project do
     [
       app: :datamatrix,
-      version: "0.1.2",
+      version: @version,
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: description(),
-      package: package()
+      package: package(),
+      escript: escript()
     ]
   end
 
@@ -39,6 +42,12 @@ defmodule DataMatrix.MixProject do
       files: ~w(lib mix.exs README.md),
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/0x8b/datamatrix"}
+    ]
+  end
+
+  defp escript do
+    [
+      main_module: DataMatrix.CLI
     ]
   end
 end

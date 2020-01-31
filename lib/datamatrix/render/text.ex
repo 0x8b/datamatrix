@@ -1,7 +1,7 @@
 defmodule DataMatrix.Render.Text do
   @moduledoc false
 
-  @default_opts [one: "1", zero: "0", separator: "", newline: "\n"]
+  @default_opts [dark: "1", light: "0", separator: "", newline: "\n"]
 
   @doc """
 
@@ -9,8 +9,8 @@ defmodule DataMatrix.Render.Text do
   def format(%{matrix: rows}, opts \\ []) do
     opts = Keyword.merge(@default_opts, opts)
 
-    dark = to_string(opts[:one])
-    light = to_string(opts[:zero])
+    dark = to_string(opts[:dark])
+    light = to_string(opts[:light])
 
     Stream.map(rows, fn row ->
       row

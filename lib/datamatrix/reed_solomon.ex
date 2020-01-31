@@ -5,6 +5,8 @@ defmodule DataMatrix.ReedSolomon do
 
   alias DataMatrix.{GaloisField, SymbolAttribute}
 
+  @poly Code.eval_file("lib/datamatrix/polynomials.map") |> elem(0)
+
   @doc """
   ## Examples
 
@@ -41,29 +43,8 @@ defmodule DataMatrix.ReedSolomon do
     |> :binary.list_to_bin()
   end
 
-  @doc """
-
-  """
-  def gen_poly(nc) do
-    # coefficients
-    c = Tuple.duplicate(0, nc + 1)
-
-    Enum.reduce(1..nc, put_elem(c, 0, 1), fn i, c ->
-      c = put_elem(c, i, elem(c, i - 1))
-
-      c =
-        if i - 1 >= 1 do
-          Enum.reduce((i - 1)..1, c, fn j, c ->
-            value = elem(c, j - 1) ^^^ prod(elem(c, j), GaloisField.antilog(i))
-
-            put_elem(c, j, value)
-          end)
-        else
-          c
-        end
-
-      put_elem(c, 0, prod(elem(c, 0), GaloisField.antilog(i)))
-    end)
+  defp gen_poly(nc) do
+    Map.get(@poly, nc)
   end
 
   defp prod(0, _) do

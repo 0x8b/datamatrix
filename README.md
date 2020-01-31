@@ -9,6 +9,7 @@ References:
 ## Table of Contents
 
 - [Installation](#installation)
+- [CLI](#cli)
 - [Features](#features)
 - [Examples](#examples)
 - [Encode options](#encode-options)
@@ -33,7 +34,27 @@ def deps do
 end
 ```
 
-Don't forget to run `mix deps.get`
+To find out the latest release available on Hex, you can run `mix hex.info datamatrix` in your shell, or by going to the [datamatrix page on Hex.pm](https://hex.pm/packages/datamatrix)
+
+Then, update your dependencies:
+
+`$ mix deps.get`
+
+## CLI
+
+You can create Data Matrix symbols using the command line as follows:
+
+1) Install `datamatrix` as an escript:
+
+`mix escript.install github 0x8b/datamatrix`
+
+2) Then you are ready to use it:
+
+`datamatrix -i "hello" -o "symbol.svg"`
+
+For more details about using the command line tool, review the usage guide:
+
+`datamatrix --help`
 
 ## Features
 
@@ -97,8 +118,8 @@ There are currently two formats available: `:svg` and `:text`.
 
 | Option name | Default value | Description |
 | :-- | :-- | :-- |
-| `zero` | `"0"` | Representation of light module. |
-| `one` | `"1"` | Representation of dark module. |
+| `light` | `"0"` | Representation of light module. |
+| `dark` | `"1"` | Representation of dark module. |
 | `separator` | `""` | String that is used to join modules in a row. |
 | `newline` | `"\n"` | String that is used to join rows. |
 

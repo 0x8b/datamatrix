@@ -100,7 +100,13 @@ defmodule DataMatrix.Matrix do
   @doc """
 
   """
-  def draw_quiet_zone(%__MODULE__{matrix: matrix, nrow: nrow, ncol: ncol} = m, width \\ 1) do
+  def draw_quiet_zone(m, width \\ 1)
+
+  def draw_quiet_zone(m, nil) do
+    draw_quiet_zone(m, 1)
+  end
+
+  def draw_quiet_zone(%__MODULE__{matrix: matrix, nrow: nrow, ncol: ncol} = m, width) do
     new_nrow = nrow + 2 * width
     new_ncol = ncol + 2 * width
 

@@ -17,7 +17,7 @@ defmodule DataMatrix.Render.SVG do
       get_size(options[:height], options[:width], options[:module_size], nrow, ncol)
 
     dimensions =
-      if options[:viewport] do
+      if options[:viewbox] do
         ~s()
       else
         ~s(width="#{width}" height="#{height}" preserveAspectRatio="none")
