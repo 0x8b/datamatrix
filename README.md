@@ -46,11 +46,21 @@ You can create Data Matrix symbols using the command line as follows:
 
 1) Install `datamatrix` as an escript:
 
-`mix escript.install github 0x8b/datamatrix`
+```console
+mix escript.install github 0x8b/datamatrix
+```
 
 2) Then you are ready to use it:
 
-`datamatrix -i "hello" -o "symbol.svg"`
+```console
+datamatrix -i "hello" -o "symbol.svg"
+```
+
+or 
+
+```console
+echo -n 123456 | datamatrix
+```
 
 For more details about using the command line tool, review the usage guide:
 
