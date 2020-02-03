@@ -1,10 +1,14 @@
 defmodule DataMatrix.MappingMatrix do
   @moduledoc false
 
+  @size Code.eval_file("lib/datamatrix/static/mapping_matrix.tuple") |> elem(0)
+
   @doc """
 
   """
-  def get_mapping_matrix(nrow, ncol) do
+  def get_mapping_matrix(version) do
+    {nrow, ncol} = elem(@size, version)
+
     {mapping, _} =
       generate_placement_path(nrow, ncol)
       |> Enum.flat_map_reduce(MapSet.new(), fn module, occupied ->
@@ -22,6 +26,9 @@ defmodule DataMatrix.MappingMatrix do
         end
       end)
 
+    # Four sizes of mapping matrix (10x10, 14x14, 18x18, 22x22) have a 2x2 area
+    # remaining in the bottom right hand corner. The top left and bottom right
+    # modules of this area are dark (nominally encoding binary 1).
     mapping_matrix =
       if {nrow, ncol} in [{10, 10}, {14, 14}, {18, 18}, {22, 22}] do
         %{{nrow - 1, ncol - 1} => 1, {nrow - 2, ncol - 2} => 1}
@@ -128,9 +135,7 @@ defmodule DataMatrix.MappingMatrix do
     ]
   end
 
-  defp shape({_, _}, {_, _}) do
-    []
-  end
+  defp shape({_, _}, {_, _}), do: []
 
   defp module({row, col}, {nrow, ncol}) when row < 0 do
     module({row + nrow, col + 4 - rem(nrow + 4, 8)}, {nrow, ncol})
@@ -140,7 +145,5 @@ defmodule DataMatrix.MappingMatrix do
     module({row + 4 - rem(ncol + 4, 8), col + ncol}, {nrow, ncol})
   end
 
-  defp module({row, col}, {_, _}) do
-    {row, col}
-  end
+  defp module({row, col}, {_, _}), do: {row, col}
 end

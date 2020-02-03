@@ -1,15 +1,18 @@
 defmodule DataMatrix.Matrix do
   @moduledoc false
 
-  alias DataMatrix.{MappingMatrix, SymbolAttribute}
+  alias DataMatrix.MappingMatrix
 
-  defstruct [:matrix, :version, :nrow, :ncol]
+  defstruct ~w(matrix version nrow ncol)a
+
+  @symbol_size Code.eval_file("lib/datamatrix/static/symbol_size.tuple") |> elem(0)
+  @region_size Code.eval_file("lib/datamatrix/static/data_region_size.tuple") |> elem(0)
 
   @doc """
 
   """
   def new(version) when version in 0..29 do
-    {nrow, ncol} = SymbolAttribute.size(version)
+    {nrow, ncol} = elem(@symbol_size, version)
 
     %__MODULE__{
       matrix: empty_matrix(nrow, ncol),
@@ -23,7 +26,7 @@ defmodule DataMatrix.Matrix do
 
   """
   def draw_patterns(%__MODULE__{matrix: matrix, nrow: nrow, ncol: ncol, version: version} = m) do
-    {region_nrow, region_ncol} = SymbolAttribute.data_region_size(version)
+    {region_nrow, region_ncol} = elem(@region_size, version)
 
     horizontal_patterns =
       get_positions(region_nrow, nrow)
@@ -65,12 +68,11 @@ defmodule DataMatrix.Matrix do
 
   """
   def draw_data(%__MODULE__{matrix: matrix, version: version} = m, bits) do
-    {nrow, ncol} = SymbolAttribute.mapping_matrix_size(version)
-    {mapping, mapping_matrix} = MappingMatrix.get_mapping_matrix(nrow, ncol)
+    {mapping, mapping_matrix} = MappingMatrix.get_mapping_matrix(version)
 
     data_matrix =
       mapping
-      |> subdivide_into_data_regions(SymbolAttribute.data_region_size(version))
+      |> subdivide_into_data_regions(elem(@region_size, version))
       |> Stream.zip(bits)
       |> Map.new()
 

@@ -1,6 +1,10 @@
-# Data Matrix
+# Data Matrix · [![GitHub license](https://img.shields.io/hexpm/l/datamatrix?color=brightgreen&style=flat-square)](https://github.com/0x8b/datamatrix/blob/master/LICENSE) ![Downloads](https://img.shields.io/hexpm/dt/datamatrix?color=brightgreen&style=flat-square)
 
 This is a software library that enables programs to **write** Data Matrix barcodes of the modern ECC200 variety.
+
+- Supports rectangular symbols (this is optional according to ISO/IEC 16022:2006(E))
+
+---
 
 References:
 
@@ -10,9 +14,8 @@ References:
 
 - [Installation](#installation)
 - [CLI](#cli)
-- [Features](#features)
 - [Examples](#examples)
-- [Encode options](#encode-options)
+- [Encoding options](#encoding-options)
 - [Rendering options](#rendering-options)
   - [SVG](#svg-options)
   - [Text](#text-options)
@@ -38,7 +41,10 @@ To find out the latest release available on Hex, you can run `mix hex.info datam
 
 Then, update your dependencies:
 
-`$ mix deps.get`
+
+```console
+mix do deps.get, deps.compile
+```
 
 ## CLI
 
@@ -74,11 +80,6 @@ For more details about using the command line tool, review the usage guide:
 datamatrix --help
 ```
 
-## Features
-
-- rectangular symbols (this is optional according to ISO/IEC 16022:2006(E))
-- default encoding scheme
-
 ## Examples
 
 ```ex
@@ -106,7 +107,7 @@ File.write!("square.svg", svg)
 
 <img src="./docs/figures/example_square.svg" alt="Example square Data Matrix">
 
-## `DataMatrix.encode!` options
+## Encoding options
 
 `ArgumentError` is thrown when the number of data codewords exceeds the symbol capacity.
 

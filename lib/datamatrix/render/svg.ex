@@ -1,17 +1,17 @@
 defmodule DataMatrix.Render.SVG do
   @moduledoc false
 
-  @default_options %{
+  @default_options [
     background: "white",
     color: "black",
     module_size: 5
-  }
+  ]
 
   @doc """
 
   """
   def format(%{nrow: nrow, ncol: ncol, matrix: rows}, options \\ []) do
-    options = Map.merge(@default_options, Map.new(options))
+    options = Keyword.merge(@default_options, options)
 
     {height, width} =
       get_size(options[:height], options[:width], options[:module_size], nrow, ncol)
@@ -55,9 +55,7 @@ defmodule DataMatrix.Render.SVG do
     """
   end
 
-  defp get_size(nil, nil, module_size, nrow, ncol) do
-    {nrow * module_size, ncol * module_size}
-  end
+  defp get_size(nil, nil, module_size, nrow, ncol), do: {nrow * module_size, ncol * module_size}
 
   defp get_size(height, nil, _module_size, nrow, ncol) when is_number(height) do
     {height, height * (ncol / nrow)}
@@ -67,7 +65,5 @@ defmodule DataMatrix.Render.SVG do
     {width * (nrow / ncol), width}
   end
 
-  defp get_size(height, width, _module_size, _nrow, _ncol) do
-    {height, width}
-  end
+  defp get_size(height, width, _module_size, _nrow, _ncol), do: {height, width}
 end

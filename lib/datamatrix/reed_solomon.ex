@@ -3,9 +3,11 @@ defmodule DataMatrix.ReedSolomon do
 
   import Bitwise
 
-  alias DataMatrix.{GaloisField, SymbolAttribute}
+  alias DataMatrix.GaloisField
 
-  @poly Code.eval_file("lib/datamatrix/polynomials.map") |> elem(0)
+  @poly Code.eval_file("lib/datamatrix/static/polynomials.map") |> elem(0)
+  @blocks Code.eval_file("lib/datamatrix/static/interleaved_blocks.tuple") |> elem(0)
+  @error_codewords Code.eval_file("lib/datamatrix/static/total_error_codewords.tuple") |> elem(0)
 
   @doc """
   ## Examples
@@ -14,8 +16,8 @@ defmodule DataMatrix.ReedSolomon do
       <<114, 25, 5, 88, 102>>
   """
   def encode(version, data) do
-    blocks = SymbolAttribute.interleaved_blocks(version)
-    errors = SymbolAttribute.total_error_codewords(version)
+    blocks = elem(@blocks, version)
+    errors = elem(@error_codewords, version)
     length = div(errors, blocks)
     coefficients = gen_poly(length)
 
@@ -43,17 +45,10 @@ defmodule DataMatrix.ReedSolomon do
     |> :binary.list_to_bin()
   end
 
-  defp gen_poly(nc) do
-    Map.get(@poly, nc)
-  end
+  defp gen_poly(nc), do: Map.get(@poly, nc)
 
-  defp prod(0, _) do
-    0
-  end
-
-  defp prod(_, 0) do
-    0
-  end
+  defp prod(0, _), do: 0
+  defp prod(_, 0), do: 0
 
   defp prod(a, b) do
     GaloisField.antilog(rem(GaloisField.log(a) + GaloisField.log(b), 255))

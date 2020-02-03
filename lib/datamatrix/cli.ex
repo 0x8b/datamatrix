@@ -33,7 +33,7 @@ defmodule DataMatrix.CLI do
 
   """
   def main(args \\ System.argv()) do
-    {opts, _args, _invalid} = OptionParser.parse(args, aliases: @aliases, switches: @switches)
+    {opts, _args, _invalid} = OptionParser.parse(args, aliases: @aliases, strict: @switches)
 
     cond do
       Keyword.has_key?(opts, :help) ->

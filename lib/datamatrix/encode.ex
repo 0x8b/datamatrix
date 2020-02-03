@@ -1,7 +1,7 @@
 defmodule DataMatrix.Encode do
   @moduledoc false
 
-  alias DataMatrix.SymbolAttribute
+  @symbol_capacity Code.eval_file("lib/datamatrix/static/total_data_codewords.tuple") |> elem(0)
 
   @ascii_digit 48..57
   @ascii_pad 129
@@ -18,9 +18,7 @@ defmodule DataMatrix.Encode do
       iex> DataMatrix.Encode.encode!("AAAAAAAAA")
       {:ok, 3, <<66, 66, 66, 66, 66, 66, 66, 66, 66, 129, 101, 251>>}
   """
-  def encode!(binary) do
-    encode!(binary, :square)
-  end
+  def encode!(binary), do: encode!(binary, :square)
 
   @doc """
 
@@ -35,7 +33,7 @@ defmodule DataMatrix.Encode do
          data_codewords <>
            randomize_253_state(
              data_codewords_length,
-             SymbolAttribute.data_capacity(version) - data_codewords_length
+             elem(@symbol_capacity, version) - data_codewords_length
            )}
 
       {:error, error} ->
@@ -60,12 +58,10 @@ defmodule DataMatrix.Encode do
     <<@upper_shift>> <> <<encoded>> <> encode_ascii(rest)
   end
 
-  defp encode_ascii(<<>>) do
-    <<>>
-  end
+  defp encode_ascii(<<>>), do: <<>>
 
   defp find_symbol(data_length, version) when version in 0..29 do
-    if data_length <= SymbolAttribute.data_capacity(version) do
+    if data_length <= elem(@symbol_capacity, version) do
       {:ok, version}
     else
       {:error, "Specified version is too small for the data."}
@@ -82,7 +78,8 @@ defmodule DataMatrix.Encode do
 
   defp find_symbol_by_offset(data_length, offset) do
     version =
-      SymbolAttribute.total_data_codewords()
+      @symbol_capacity
+      |> Tuple.to_list()
       |> Stream.drop(offset)
       |> Enum.find_index(fn capacity ->
         capacity >= data_length
@@ -95,17 +92,13 @@ defmodule DataMatrix.Encode do
     end
   end
 
-  defp randomize_253_state(_, 0) do
-    <<>>
-  end
+  defp randomize_253_state(_, 0), do: <<>>
 
   defp randomize_253_state(position, n) do
     <<@ascii_pad>> <> do_randomize_253_state(position + 1, n - 1)
   end
 
-  defp do_randomize_253_state(_, 0) do
-    <<>>
-  end
+  defp do_randomize_253_state(_, 0), do: <<>>
 
   defp do_randomize_253_state(position, n) do
     pseudo_random = @ascii_pad + rem(149 * position, 253) + 1
