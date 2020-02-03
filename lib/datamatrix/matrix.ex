@@ -3,7 +3,7 @@ defmodule DataMatrix.Matrix do
 
   alias DataMatrix.MappingMatrix
 
-  defstruct ~w(matrix version nrow ncol)a
+  defstruct ~w(matrix version nrow ncol quiet_zone)a
 
   @symbol_size Code.eval_file("lib/datamatrix/static/symbol_size.tuple") |> elem(0)
   @region_size Code.eval_file("lib/datamatrix/static/data_region_size.tuple") |> elem(0)
@@ -11,47 +11,67 @@ defmodule DataMatrix.Matrix do
   @doc """
 
   """
-  def new(version) when version in 0..29 do
+  def new(version, quiet_zone) when version in 0..29 and is_integer(quiet_zone) do
     {nrow, ncol} = elem(@symbol_size, version)
 
     %__MODULE__{
-      matrix: empty_matrix(nrow, ncol),
+      matrix: nil,
       version: version,
       nrow: nrow,
-      ncol: ncol
+      ncol: ncol,
+      quiet_zone: quiet_zone
     }
   end
 
   @doc """
 
   """
-  def draw_patterns(%__MODULE__{matrix: matrix, nrow: nrow, ncol: ncol, version: version} = m) do
-    {region_nrow, region_ncol} = elem(@region_size, version)
+  def draw_patterns(%__MODULE__{nrow: nrow, ncol: ncol, quiet_zone: qz} = symbol) do
+    {vgap, hgap} = elem(@region_size, symbol.version)
 
-    horizontal_patterns =
-      get_positions(region_nrow, nrow)
-      |> Stream.zip(Stream.cycle([:dotted, :solid]))
-      |> Stream.map(fn {row, type} ->
-        for col <- 0..(ncol - 1),
-            into: %{},
-            do: {{row, col}, if(type == :dotted, do: 1 - rem(col, 2), else: 1)}
-      end)
+    alignment_patterns =
+      [
+        draw_horizontal_patterns(hgap, nrow, ncol),
+        draw_vertical_patterns(vgap, nrow, ncol)
+      ]
+      |> Stream.concat()
+      |> Stream.flat_map(& &1)
+      |> Stream.map(fn {row, col} -> {{row + qz, col + qz}, 1} end)
+      |> Enum.into(Map.new())
 
-    vertical_patterns =
-      get_positions(region_ncol, ncol)
-      |> Stream.zip(Stream.cycle([:solid, :dotted]))
-      |> Stream.map(fn {col, type} ->
-        for row <- 0..(nrow - 1),
-            into: %{},
-            do: {{row, col}, if(type == :dotted, do: rem(row, 2), else: 1)}
-      end)
+    %__MODULE__{symbol | matrix: alignment_patterns}
+  end
 
-    patterns =
-      horizontal_patterns
-      |> Stream.concat(vertical_patterns)
-      |> Enum.reduce(%{}, &Map.merge/2)
+  defp draw_horizontal_patterns(gap, nrow, ncol) do
+    get_positions(gap, nrow)
+    |> Stream.zip(Stream.cycle([:dashed, :solid]))
+    |> Stream.map(fn {row, type} ->
+      draw_horizontal_line(row, ncol, type)
+    end)
+  end
 
-    %{m | matrix: Map.merge(matrix, patterns)}
+  defp draw_vertical_patterns(gap, nrow, ncol) do
+    get_positions(gap, ncol)
+    |> Stream.zip(Stream.cycle([:solid, :dashed]))
+    |> Stream.map(fn {col, type} ->
+      draw_vertical_line(col, nrow, type)
+    end)
+  end
+
+  defp draw_horizontal_line(row, ncol, :solid) do
+    for col <- 0..(ncol - 1), do: {row, col}
+  end
+
+  defp draw_horizontal_line(row, ncol, :dashed) do
+    for col <- 0..(div(ncol, 2) - 1), do: {row, 2 * col}
+  end
+
+  defp draw_vertical_line(col, nrow, :solid) do
+    for row <- 0..(nrow - 1), do: {row, col}
+  end
+
+  defp draw_vertical_line(col, nrow, :dashed) do
+    for row <- 0..(div(nrow, 2) - 1), do: {2 * row + 1, col}
   end
 
   defp get_positions(gap, length) do
@@ -67,21 +87,29 @@ defmodule DataMatrix.Matrix do
   @doc """
 
   """
-  def draw_data(%__MODULE__{matrix: matrix, version: version} = m, bits) do
-    {mapping, mapping_matrix} = MappingMatrix.get_mapping_matrix(version)
+  def draw_data(%__MODULE__{nrow: nrow, ncol: ncol, quiet_zone: qz} = symbol, bits) do
+    remaining_area =
+      if {nrow, ncol} in [{12, 12}, {16, 16}, {20, 20}, {24, 24}] do
+        %{
+          {nrow + qz - 2, ncol + qz - 2} => 1,
+          {nrow + qz - 3, ncol + qz - 3} => 1
+        }
+      else
+        %{}
+      end
 
-    data_matrix =
+    mapping = MappingMatrix.get_mapping_matrix(symbol.version)
+
+    matrix =
       mapping
-      |> subdivide_into_data_regions(elem(@region_size, version))
+      |> subdivide_into_data_regions(elem(@region_size, symbol.version))
+      |> Stream.map(fn {row, col} -> {row + qz + 1, col + qz + 1} end)
       |> Stream.zip(bits)
       |> Map.new()
+      |> Map.merge(symbol.matrix)
+      |> Map.merge(remaining_area)
 
-    data_matrix =
-      mapping_matrix
-      |> Map.merge(data_matrix)
-      |> translate(1, 1)
-
-    %{m | matrix: Map.merge(matrix, data_matrix)}
+    %__MODULE__{symbol | matrix: matrix}
   end
 
   defp subdivide_into_data_regions(points, {nrow, ncol}) do
@@ -93,40 +121,17 @@ defmodule DataMatrix.Matrix do
     end)
   end
 
-  defp translate(matrix, drow, dcol) do
-    for {{row, col}, value} <- matrix,
-        into: %{},
-        do: {{row + drow, col + dcol}, value}
-  end
-
   @doc """
 
   """
-  def draw_quiet_zone(m, width \\ 1)
+  def export(%__MODULE__{nrow: nrow, ncol: ncol, version: version, quiet_zone: qz} = symbol) do
+    nrow = nrow + 2 * qz
+    ncol = ncol + 2 * qz
 
-  def draw_quiet_zone(m, nil) do
-    draw_quiet_zone(m, 1)
-  end
-
-  def draw_quiet_zone(%__MODULE__{matrix: matrix, nrow: nrow, ncol: ncol} = m, width) do
-    new_nrow = nrow + 2 * width
-    new_ncol = ncol + 2 * width
-
-    empty = empty_matrix(new_nrow, new_ncol)
-
-    centered_matrix = translate(matrix, width, width)
-
-    %__MODULE__{m | matrix: Map.merge(empty, centered_matrix), nrow: new_nrow, ncol: new_ncol}
-  end
-
-  @doc """
-
-  """
-  def export(%__MODULE__{matrix: matrix, nrow: nrow, ncol: ncol, version: version}) do
     flatten =
       for row <- 0..(nrow - 1),
           col <- 0..(ncol - 1),
-          do: Map.get(matrix, {row, col})
+          do: Map.get(symbol.matrix, {row, col}, 0)
 
     %{
       version: version,
@@ -134,12 +139,5 @@ defmodule DataMatrix.Matrix do
       ncol: ncol,
       matrix: flatten |> Enum.chunk_every(ncol)
     }
-  end
-
-  defp empty_matrix(nrow, ncol) do
-    for row <- 0..(nrow - 1),
-        col <- 0..(ncol - 1),
-        into: %{},
-        do: {{row, col}, 0}
   end
 end

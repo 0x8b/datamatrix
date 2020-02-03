@@ -32,10 +32,9 @@ defmodule DataMatrix do
   defp do_encode(version, data_codewords, opts) do
     error_codewords = ReedSolomon.encode(version, data_codewords)
 
-    Matrix.new(version)
+    Matrix.new(version, opts[:quiet_zone])
     |> Matrix.draw_patterns()
     |> Matrix.draw_data(Bits.extract(data_codewords <> error_codewords))
-    |> Matrix.draw_quiet_zone(opts[:quiet_zone])
     |> Matrix.export()
   end
 

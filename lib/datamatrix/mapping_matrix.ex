@@ -26,17 +26,7 @@ defmodule DataMatrix.MappingMatrix do
         end
       end)
 
-    # Four sizes of mapping matrix (10x10, 14x14, 18x18, 22x22) have a 2x2 area
-    # remaining in the bottom right hand corner. The top left and bottom right
-    # modules of this area are dark (nominally encoding binary 1).
-    mapping_matrix =
-      if {nrow, ncol} in [{10, 10}, {14, 14}, {18, 18}, {22, 22}] do
-        %{{nrow - 1, ncol - 1} => 1, {nrow - 2, ncol - 2} => 1}
-      else
-        %{}
-      end
-
-    {mapping, mapping_matrix}
+    mapping
   end
 
   defp generate_placement_path(nrow, ncol) do
