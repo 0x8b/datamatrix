@@ -30,9 +30,10 @@ defmodule DataMatrix.MatrixTest do
     version = 0
 
     result =
-      Matrix.new(version, 2)
+      Matrix.new(version)
       |> Matrix.draw_patterns()
       |> Matrix.draw_data(Bits.extract(<<0x8E, 0xA4, 0xBA, 0x72, 0x19, 0x05, 0x58, 0x66>>))
+      |> Matrix.draw_quiet_zone(2)
       |> Matrix.export()
 
     assert Map.equal?(result, expected)

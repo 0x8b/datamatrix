@@ -26,7 +26,14 @@ defmodule DataMatrix.MappingMatrix do
         end
       end)
 
-    mapping
+    remaining_area =
+      if {nrow, ncol} in [{10, 10}, {14, 14}, {18, 18}, {22, 22}] do
+        [{nrow - 1, ncol - 1}, {nrow - 2, ncol - 2}]
+      else
+        []
+      end
+
+    {mapping, remaining_area}
   end
 
   defp generate_placement_path(nrow, ncol) do
