@@ -32,7 +32,7 @@ The package can be installed by adding `data_matrix` to your list of dependencie
 ```exs
 def deps do
   [
-    {:data_matrix, "~> 0.1.2"}
+    {:data_matrix, "~> 0.1.3"}
   ]
 end
 ```
@@ -43,7 +43,7 @@ Then, update your dependencies:
 
 
 ```console
-mix do deps.get, deps.compile
+$ mix do deps.get, deps.compile
 ```
 
 ## CLI
@@ -53,28 +53,28 @@ You can create Data Matrix symbols using the command line as follows:
 1) Install `datamatrix` as an escript:
 
 ```console
-mix escript.install github 0x8b/datamatrix
+$ mix escript.install github 0x8b/datamatrix
 ```
 
 2) Then you are ready to use it:
 
 ```console
-datamatrix -i "input.txt"          # or
+$ datamatrix -i "input.txt"          # or
 
-datamatrix input_text              # or
+$ datamatrix input_text              # or
 
-cat input_text.txt | datamatrix -  # read standard input
+$ cat input_text.txt | datamatrix -  # read standard input
 ```
+
+**Note**: You must append "~/.mix/escripts" to your PATH if you want to invoke escripts by name.
 
 For more details about using the command line tool, review the usage guide:
 
 ```console
-datamatrix --help
+datamatrix -h
 ```
 
 ## Examples
-
-**Note**: `DataMatrix.encode` returns `{:ok, symbol}` or `{:error, reason}`
 
 ```ex
 data = "hello"
@@ -104,7 +104,7 @@ File.write!("square.svg", svg)
 
 ## Encoding parameters
 
-`ArgumentError` is thrown when the number of data codewords exceeds the symbol capacity.
+`DataMatrix.encode` returns `{:ok, symbol}` or `{:error, reason}`
 
 | Parameter | Default value | Description |
 | :-- | :-- | :-- |
@@ -125,7 +125,7 @@ Available output formats:
 
 | Parameter name | Default value | Description |
 | :-- | :-- | :-- |
-| `module_size` | `10` | Size of module. |
+| `module_size` | `10` | Size of module in pixels. |
 | `dark` | `"#000000"` | Color of dark module. Only **#RRGGBB** |
 | `light` | `"#ffffff"` | Color of light module. Only **#RRGGBB**|
 
@@ -136,7 +136,7 @@ Available output formats:
 | `width` | auto | Width in pixels (quiet zone included). |
 | `height` | auto | Height in pixels (quiet zone included). |
 | `viewbox` | `false` | Width and height are not included in SVG if `viewbox` is set to `true`. |
-| `module_size` | `5` | Size of module. |
+| `module_size` | `5` | Size of module in pixles. |
 | `dark` | `"black"` | Color of dark module. Color syntax for SVG [w3.org 🡕](https://www.w3.org/TR/SVGColor12/#Color_syntax) |
 | `light` | `"white"` | Color of light module. |
 

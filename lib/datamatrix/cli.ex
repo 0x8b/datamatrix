@@ -95,7 +95,7 @@ defmodule DataMatrix.CLI do
     end
   end
 
-  defp read_stdin() do
+  defp read_stdin do
     case IO.read(:stdio, :all) do
       {:error, error} ->
         {:error, Atom.to_string(error)}
