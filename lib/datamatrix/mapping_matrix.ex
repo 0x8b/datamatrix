@@ -1,7 +1,7 @@
 defmodule DataMatrix.MappingMatrix do
   @moduledoc false
 
-  @size Code.eval_file("lib/datamatrix/static/mapping_matrix.tuple") |> elem(0)
+  @size Code.eval_file("lib/datamatrix/static/mapping_matrix_size.tuple") |> elem(0)
 
   @doc """
 

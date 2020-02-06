@@ -9,21 +9,21 @@ defmodule DataMatrix.Encode do
 
   @doc """
   ## Examples
-      iex> DataMatrix.Encode.encode!("1234569")
+      iex> DataMatrix.Encode.encode("1234569")
       {:ok, 1, <<142, 164, 186, 58, 129>>}
 
-      iex> DataMatrix.Encode.encode!("Aa999")
+      iex> DataMatrix.Encode.encode("Aa999")
       {:ok, 1, <<66, 98, 229, 58, 129>>}
 
-      iex> DataMatrix.Encode.encode!("AAAAAAAAA")
+      iex> DataMatrix.Encode.encode("AAAAAAAAA")
       {:ok, 3, <<66, 66, 66, 66, 66, 66, 66, 66, 66, 129, 101, 251>>}
   """
-  def encode!(binary), do: encode!(binary, :square)
+  def encode(binary), do: encode(binary, :square)
 
   @doc """
 
   """
-  def encode!(binary, version) do
+  def encode(binary, version) do
     data_codewords = encode_ascii(binary)
     data_codewords_length = byte_size(data_codewords)
 

@@ -26,12 +26,12 @@ defmodule DataMatrix.Matrix do
 
   """
   def draw_patterns(%__MODULE__{nrow: nrow, ncol: ncol, version: version} = symbol) do
-    {vgap, hgap} = elem(@region_size, version)
+    {row_gap, col_gap} = elem(@region_size, version)
 
     alignment_patterns =
       [
-        draw_horizontal_patterns(hgap, nrow, ncol),
-        draw_vertical_patterns(vgap, nrow, ncol)
+        draw_horizontal_patterns(row_gap, nrow, ncol),
+        draw_vertical_patterns(col_gap, nrow, ncol)
       ]
       |> Enum.concat()
       |> List.flatten()
@@ -106,6 +106,9 @@ defmodule DataMatrix.Matrix do
     end)
   end
 
+  @doc """
+
+  """
   def draw_quiet_zone(%__MODULE__{nrow: nrow, ncol: ncol, dark: dark} = symbol, quiet_zone) do
     translated =
       Enum.map(dark, fn {row, col} ->

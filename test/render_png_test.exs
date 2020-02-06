@@ -1,9 +1,9 @@
-defmodule DataMatrix.Render.SVGTest do
+defmodule DataMatrix.Render.PNGTest do
   use ExUnit.Case
 
-  alias DataMatrix.Render.SVG
+  alias DataMatrix.Render.PNG
 
-  test "write SVG to file" do
+  test "write PNG to file" do
     data = %{
       nrow: 12,
       ncol: 12,
@@ -23,15 +23,15 @@ defmodule DataMatrix.Render.SVGTest do
       ]
     }
 
-    svg = SVG.format(data, dark: "crimson", light: "pink")
+    png = PNG.format(data, dark: "#ff0000", light: "#ffff00")
 
     directory = Path.expand("./test/output")
 
     File.mkdir(directory)
-    File.write!(Path.join(directory, "output_1.svg"), svg)
+    File.write!(Path.join(directory, "output_1.png"), png, [:binary])
   end
 
-  test "write SVG to file (matrix without quiet zone)" do
+  test "write PNG to file (matrix without quiet zone)" do
     data = %{
       nrow: 10,
       ncol: 10,
@@ -49,11 +49,11 @@ defmodule DataMatrix.Render.SVGTest do
       ]
     }
 
-    svg = SVG.format(data, dark: "green", light: "lightgreen")
+    png = PNG.format(data)
 
     directory = Path.expand("./test/output")
 
     File.mkdir(directory)
-    File.write!(Path.join(directory, "output_2.svg"), svg)
+    File.write!(Path.join(directory, "output_2.png"), png, [:binary])
   end
 end

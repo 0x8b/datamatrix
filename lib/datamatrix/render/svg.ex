@@ -2,8 +2,8 @@ defmodule DataMatrix.Render.SVG do
   @moduledoc false
 
   @default_options [
-    background: "white",
-    color: "black",
+    dark: "black",
+    light: "white",
     module_size: 5
   ]
 
@@ -47,8 +47,8 @@ defmodule DataMatrix.Render.SVG do
     ~s"""
     <?xml version="1.0" standalone="yes"?>
     <svg #{dimensions} viewBox="0 0 #{ncol} #{nrow}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="#{options[:background]}"/>
-      <g transform="translate(0 0.5)" stroke="#{options[:color]}" stroke-width="1">
+      <rect width="100%" height="100%" fill="#{options[:light]}"/>
+      <g transform="translate(0 0.5)" stroke="#{options[:dark]}" stroke-width="1">
         #{lines}
       </g>
     </svg>

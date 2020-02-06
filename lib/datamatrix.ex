@@ -14,19 +14,19 @@ defmodule DataMatrix do
   @doc """
 
   """
-  def encode!(data, opts \\ [])
+  def encode(data, opts \\ [])
 
-  def encode!(data, opts) when is_binary(data) do
+  def encode(data, opts) when is_binary(data) do
     opts = Keyword.merge(@default_opts, opts)
 
-    case Encode.encode!(data, opts[:version] || opts[:shape]) do
-      {:ok, version, data_codewords} -> do_encode(version, data_codewords, opts)
-      {:error, error} -> raise ArgumentError, message: error
+    case Encode.encode(data, opts[:version] || opts[:shape] || :square) do
+      {:ok, version, data_codewords} -> {:ok, do_encode(version, data_codewords, opts)}
+      {:error, error} -> {:error, error}
     end
   end
 
-  def encode!(data, _opts) when is_nil(data) do
-    raise ArgumentError, message: "Missing `data` argument."
+  def encode(data, _opts) when is_nil(data) or data == <<>> do
+    {:error, "Zero length data"}
   end
 
   defp do_encode(version, data_codewords, opts) do
@@ -46,6 +46,10 @@ defmodule DataMatrix do
 
   def format(matrix, :svg, opts) do
     Render.SVG.format(matrix, opts)
+  end
+
+  def format(matrix, :png, opts) do
+    Render.PNG.format(matrix, opts)
   end
 
   def format(matrix, :text, opts) do

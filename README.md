@@ -4,7 +4,6 @@ This is a software library that enables programs to **write** Data Matrix barcod
 
 - Supports rectangular symbols (this is optional according to ISO/IEC 16022:2006(E))
 
----
 
 References:
 
@@ -15,10 +14,11 @@ References:
 - [Installation](#installation)
 - [CLI](#cli)
 - [Examples](#examples)
-- [Encoding options](#encoding-options)
-- [Rendering options](#rendering-options)
-  - [SVG](#svg-options)
-  - [Text](#text-options)
+- [Encoding parameters](#encoding-parameters)
+- [Rendering parameters](#rendering-parameters)
+  - [PNG](#png-parameters)
+  - [SVG](#svg-parameters)
+  - [Text](#text-parameters)
 - [Maximum data capacity](#maximum-data-capacity)
 - [Notes](#notes)
 - [Contributing](#contributing)
@@ -59,19 +59,11 @@ mix escript.install github 0x8b/datamatrix
 2) Then you are ready to use it:
 
 ```console
-# Linux
+datamatrix -i "input.txt"          # or
 
-datamatrix -i "hello" -o "symbol.svg"
+datamatrix input_text              # or
 
-# or
-
-echo -n 123456 | datamatrix
-```
-
-```console
-# Windows
-
-type content.txt | escript datamatrix
+cat input_text.txt | datamatrix -  # read standard input
 ```
 
 For more details about using the command line tool, review the usage guide:
@@ -82,63 +74,80 @@ datamatrix --help
 
 ## Examples
 
+**Note**: `DataMatrix.encode` returns `{:ok, symbol}` or `{:error, reason}`
+
 ```ex
-data = "A1B2C3D4E5F6G7H8I9J0K1L2"
+data = "hello"
 
-matrix = DataMatrix.encode!(data, quiet_zone: 2, shape: :rectangle)
+{:ok, symbol} =
+  data
+  |> DataMatrix.encode(shape: :rectangle)
 
-svg = DataMatrix.format(matrix, :svg, module_size: 8)
+png =
+  symbol
+  |> DataMatrix.format(:png, module_size: 8)
 
-File.write("dm.svg", svg)
+File.write("symbol.png", png)
 ```
 
-<img src="./docs/figures/example_rectangular.svg" alt="Example rectangular Data Matrix">
+<img src="./docs/figures/example_rectangle_hello.png" alt="Example rectangular Data Matrix">
 
 ```ex
-data = "123456"
+{:ok, symbol} = DataMatrix.encode("123456", quiet_zone: 4)
 
-svg =
-  data
-  |> DataMatrix.encode!()
-  |> DataMatrix.format(:svg, color: "#6e4a7e", background: "aliceblue", width: 200)
+svg = DataMatrix.format(symbol, :svg, light: "#ffff00", width: 200)
 
 File.write!("square.svg", svg)
 ```
 
 <img src="./docs/figures/example_square.svg" alt="Example square Data Matrix">
 
-## Encoding options
+## Encoding parameters
 
 `ArgumentError` is thrown when the number of data codewords exceeds the symbol capacity.
 
-| Option | Default value | Description |
+| Parameter | Default value | Description |
 | :-- | :-- | :-- |
 | `quiet_zone` | `1` | All four sides of symbol are surrounded by quiet zone border. |
 | `version` | auto | See [Maximum data capacity](#maximum-data-capacity). Version is selected automatically if not specified. |
 | `shape` | `:square` | Shape of symbol. Available shapes are `:square` and `:rectangle`. |
 
 
-## Rendering options
+## Rendering parameters
 
-There are currently two formats available: `:svg` and `:text`.
+Available output formats:
 
-### SVG options
+- [PNG](#png-parameters)
+- [SVG](#svg-parameters)
+- [Text](#text-parameters)
 
-| Option name | Default value | Description |
+### PNG parameters
+
+| Parameter name | Default value | Description |
+| :-- | :-- | :-- |
+| `module_size` | `10` | Size of module. |
+| `dark` | `"#000000"` | Color of dark module. Only **#RRGGBB** |
+| `light` | `"#ffffff"` | Color of light module. Only **#RRGGBB**|
+
+### SVG parameters
+
+| Parameter name | Default value | Description |
 | :-- | :-- | :-- |
 | `width` | auto | Width in pixels (quiet zone included). |
 | `height` | auto | Height in pixels (quiet zone included). |
 | `viewbox` | `false` | Width and height are not included in SVG if `viewbox` is set to `true`. |
 | `module_size` | `5` | Size of module. |
-| `color` | `"black"` | Color of dark module. |
-| `background` | `"white"` | Color of light module. |
+| `dark` | `"black"` | Color of dark module. Color syntax for SVG [w3.org 🡕](https://www.w3.org/TR/SVGColor12/#Color_syntax) |
+| `light` | `"white"` | Color of light module. |
 
-### Text options
+**Note**: 
 
-| Option name | Default value | Description |
+### Text parameters
+
+| Parameter name | Default value | Description |
 | :-- | :-- | :-- |
-| `light` | `"0"` | Representation of light module. |
 | `dark` | `"1"` | Representation of dark module. |
+| `light` | `"0"` | Representation of light module. |
 | `separator` | `""` | String that is used to join modules in a row. |
 | `newline` | `"\n"` | String that is used to join rows. |
 
