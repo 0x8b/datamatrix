@@ -114,11 +114,13 @@ defmodule DataMatrix.CLI do
   end
 
   defp process({data, opts}) do
+    shape = if opts[:rectangle], do: :rectangle, else: :square
+
     symbol =
       case DataMatrix.encode(data,
              quiet_zone: opts[:quiet_zone],
              version: opts[:symbol],
-             shape: opts[:shape]
+             shape: shape
            ) do
         {:ok, symbol} ->
           symbol

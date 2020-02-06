@@ -4,7 +4,6 @@ This is a software library that enables programs to **write** Data Matrix barcod
 
 - Supports rectangular symbols (this is optional according to ISO/IEC 16022:2006(E))
 
-
 References:
 
 - ISO/IEC 16022:2006(E)
@@ -66,12 +65,12 @@ $ datamatrix input_text              # or
 $ cat input_text.txt | datamatrix -  # read standard input
 ```
 
-**Note**: You must append "~/.mix/escripts" to your PATH if you want to invoke escripts by name.
+**Note**: Don't forget to update your PATH environment variable if you want to invoke escripts by name.
 
 For more details about using the command line tool, review the usage guide:
 
 ```console
-datamatrix -h
+$ datamatrix -h
 ```
 
 ## Examples
@@ -139,8 +138,6 @@ Available output formats:
 | `module_size` | `5` | Size of module in pixles. |
 | `dark` | `"black"` | Color of dark module. Color syntax for SVG [w3.org 🡕](https://www.w3.org/TR/SVGColor12/#Color_syntax) |
 | `light` | `"white"` | Color of light module. |
-
-**Note**: 
 
 ### Text parameters
 
