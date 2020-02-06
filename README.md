@@ -32,7 +32,7 @@ The package can be installed by adding `data_matrix` to your list of dependencie
 ```exs
 def deps do
   [
-    {:data_matrix, "~> 0.1.3"}
+    {:datamatrix, "~> 0.1.3"}
   ]
 end
 ```
