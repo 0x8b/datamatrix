@@ -26,7 +26,7 @@ References:
 
 ## Installation
 
-The package can be installed by adding `data_matrix` to your list of dependencies in mix.exs:
+The package can be installed by adding `datamatrix` to your list of dependencies in mix.exs:
 
 ```exs
 def deps do
@@ -58,11 +58,11 @@ $ mix escript.install github 0x8b/datamatrix
 2) Then you are ready to use it:
 
 ```console
-$ datamatrix -i "input.txt" -p           # or
+$ datamatrix -i input.txt -p        # or
 
-$ datamatrix input_text -p               # or
+$ datamatrix input_text -p          # or
 
-$ cat input_text.txt | datamatrix - -p   # read standard input
+$ cat input.txt | datamatrix - -p   # read standard input
 ```
 
 **Note**: Don't forget to update your PATH environment variable if you want to invoke escripts by name.

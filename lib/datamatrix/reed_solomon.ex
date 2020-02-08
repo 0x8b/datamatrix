@@ -1,13 +1,11 @@
 defmodule DataMatrix.ReedSolomon do
   @moduledoc false
 
-  import Bitwise
-
   alias DataMatrix.GaloisField
 
-  @poly Code.eval_file("lib/datamatrix/static/polynomials.map") |> elem(0)
   @blocks Code.eval_file("lib/datamatrix/static/interleaved_blocks.tuple") |> elem(0)
   @error_codewords Code.eval_file("lib/datamatrix/static/total_error_codewords.tuple") |> elem(0)
+  @generator_polynomial Code.eval_file("lib/datamatrix/static/polynomials.map") |> elem(0)
 
   @doc """
   ## Examples
@@ -16,41 +14,40 @@ defmodule DataMatrix.ReedSolomon do
       <<114, 25, 5, 88, 102>>
   """
   def encode(version, data) do
-    blocks = elem(@blocks, version)
+    stride = elem(@blocks, version)
     errors = elem(@error_codewords, version)
-    length = div(errors, blocks)
-    coefficients = gen_poly(length)
+    order_polynomial = div(errors, stride)
+    coefficients = Map.get(@generator_polynomial, order_polynomial)
 
-    0..(blocks - 1)
-    |> Stream.map(fn offset ->
-      :binary.bin_to_list(data)
-      |> Enum.drop(offset)
-      |> Enum.take_every(blocks)
+    data = :binary.bin_to_list(data)
+
+    0..(stride - 1)
+    |> Enum.map(fn offset ->
+      data
+      |> Stream.drop(offset)
+      |> Stream.take_every(stride)
       |> Enum.reduce(
-        Stream.cycle([0]) |> Enum.take(length + 1),
+        Tuple.duplicate(0, order_polynomial + 1),
         fn codeword, acc ->
-          k = Enum.at(acc, 0) ^^^ codeword
+          k = GaloisField.add(elem(acc, 0), codeword)
 
           acc =
-            for j <- 0..(length - 1),
-                do: Enum.at(acc, j + 1) ^^^ prod(k, elem(coefficients, length - j - 1))
+            for j <- 0..(order_polynomial - 1),
+                do:
+                  GaloisField.add(
+                    elem(acc, j + 1),
+                    GaloisField.multiply(k, elem(coefficients, order_polynomial - j - 1))
+                  )
 
-          Enum.concat(acc, [0])
+          List.to_tuple(acc)
+          |> Tuple.append(0)
         end
       )
-      |> Enum.take(length)
+      |> Tuple.delete_at(order_polynomial)
     end)
-    |> Enum.zip()
+    |> Stream.map(&Tuple.to_list/1)
+    |> Stream.zip()
     |> Enum.flat_map(&Tuple.to_list(&1))
     |> :binary.list_to_bin()
-  end
-
-  defp gen_poly(nc), do: Map.get(@poly, nc)
-
-  defp prod(0, _), do: 0
-  defp prod(_, 0), do: 0
-
-  defp prod(a, b) do
-    GaloisField.antilog(rem(GaloisField.log(a) + GaloisField.log(b), 255))
   end
 end
