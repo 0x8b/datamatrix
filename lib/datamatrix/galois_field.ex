@@ -21,7 +21,7 @@ defmodule DataMatrix.GaloisField do
   @doc """
 
   """
-  def add(a, b), do: a ^^^ b
+  def add(a, b), do: bxor(a, b)
 
   @doc """
 
